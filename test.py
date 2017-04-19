@@ -8,3 +8,8 @@ fdt.i = 6
 fdt.iarr = np.ones(5)
 print fdt.i
 print fdt.iarr
+# should produce
+# -1
+# [1 2 3 4 5]
+# 6
+# [1 1 1 1 1]
