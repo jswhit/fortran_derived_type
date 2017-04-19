@@ -32,7 +32,7 @@ cdef class SomeDerivedType:
     property name:
         """get and set name member of derived type"""
         def __get__(self):
-            cdef char name[20]
+            cdef char name[20+1] # null char will be added
             get_name(<int *>self.ptr.data, name)
             return name
         def __set__(self,char *value):
