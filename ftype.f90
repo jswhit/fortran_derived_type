@@ -30,10 +30,10 @@ subroutine create(ih,i,iarr_len,name,iarr) bind (c)
   type (Somederivedtype), pointer :: fdt
   allocate(fdtp%ptr)
   call copy_string_ctof(name,name_f)
-  fdt ==> fdtp % ptr
+  fdt => fdtp % ptr
   allocate(fdt%iarr(iarr_len))
   fdt%i = i
-  fdt%name = name
+  fdt%name = name_f
   fdt%iarr = iarr
   !call initialize(fdtp%ptr,i,name_f,iarr,iarr_len)
   ih = transfer(fdtp, ih)
