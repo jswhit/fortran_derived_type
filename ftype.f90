@@ -27,9 +27,15 @@ subroutine create(ih,i,iarr_len,name,iarr) bind (c)
   character(c_char), intent(in) :: name(namelen+1)
   character(len=namelen) :: name_f
   type (Somederivedtype_pointer) :: fdtp
+  type (Somederivedtype), pointer :: fdt
   allocate(fdtp%ptr)
   call copy_string_ctof(name,name_f)
-  call initialize(fdtp%ptr,i,name_f,iarr,iarr_len)
+  fdt ==> fdtp % ptr
+  allocate(fdt%iarr(iarr_len))
+  fdt%i = i
+  fdt%name = name
+  fdt%iarr = iarr
+  !call initialize(fdtp%ptr,i,name_f,iarr,iarr_len)
   ih = transfer(fdtp, ih)
 end subroutine create
 
