@@ -28,13 +28,21 @@ subroutine create(ih,i,iarr_len,name,iarr) bind (c)
   character(len=namelen) :: name_f
   type (Somederivedtype_pointer) :: fdtp
   allocate(fdtp%ptr)
-  allocate(fdtp%ptr%iarr(iarr_len))
   call copy_string_ctof(name,name_f)
-  fdtp%ptr%i = i
-  fdtp%ptr%name = name_f
-  fdtp%ptr%iarr = iarr
+  call initialize(fdtp%ptr,i,name_f,iarr,iarr_len)
   ih = transfer(fdtp, ih)
 end subroutine create
+
+subroutine initialize(fdt,i,name,iarr,iarr_len)
+  integer, intent(in) :: i,iarr_len
+  integer, intent(in), dimension(iarr_len) :: iarr
+  character(*), intent(in) :: name
+  type(SomeDerivedType), intent(out) :: fdt
+  allocate(fdt%iarr(iarr_len))
+  fdt%i = i
+  fdt%name = name
+  fdt%iarr = iarr
+end subroutine initialize
 
 ! set derived type member i
 subroutine set_i(ih, i) bind(c)
