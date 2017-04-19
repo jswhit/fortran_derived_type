@@ -4,15 +4,15 @@ use iso_c_binding, only: c_int
 implicit none 
 
 ! fortran derived type
-type :: Somederivedtype
+type :: SomeDerivedType
   integer :: i
   integer, allocatable, dimension(:) :: iarr
-end type Somederivedtype
+end type SomeDerivedType
 
 ! container that has pointer to derived type
-type :: Somederivedtype_pointer
-  type(Somederivedtype), pointer :: ptr
-end type Somederivedtype_pointer
+type :: SomeDerivedType_pointer
+  type(SomeDerivedType), pointer :: ptr
+end type SomeDerivedType_pointer
 
 contains
 
@@ -21,7 +21,7 @@ subroutine create(ih,i,iarr_len,iarr) bind (c)
   integer(c_int), intent(inout), dimension(12) :: ih
   integer(c_int), intent(in) :: i,iarr_len
   integer(c_int), intent(in), dimension(iarr_len) :: iarr
-  type (Somederivedtype_pointer) :: fdtp
+  type (SomeDerivedType_pointer) :: fdtp
   allocate(fdtp%ptr)
   allocate(fdtp%ptr%iarr(iarr_len))
   fdtp%ptr%i = i
@@ -33,7 +33,7 @@ end subroutine create
 subroutine set_i(ih, i) bind(c)
    integer(c_int), intent(inout), dimension(12) :: ih
    integer(c_int), intent(in) :: i
-   type (Somederivedtype_pointer) :: fdtp
+   type (SomeDerivedType_pointer) :: fdtp
    fdtp = transfer(ih, fdtp)
    fdtp % ptr % i = i
    ih = transfer(fdtp, ih)
@@ -43,7 +43,7 @@ end subroutine set_i
 subroutine get_i(ih,i) bind (c)
    integer(c_int), intent(in), dimension(12) :: ih
    integer(c_int), intent(out) :: i
-   type (Somederivedtype_pointer) :: fdtp
+   type (SomeDerivedType_pointer) :: fdtp
    fdtp = transfer(ih, fdtp)
    i = fdtp % ptr % i
 end subroutine get_i
@@ -53,7 +53,7 @@ subroutine set_iarr(ih, iarr, n) bind(c)
    integer(c_int), intent(in) :: n
    integer(c_int), intent(inout), dimension(12) :: ih
    integer(c_int), intent(in), dimension(n) :: iarr
-   type (Somederivedtype_pointer) :: fdtp
+   type (SomeDerivedType_pointer) :: fdtp
    fdtp = transfer(ih, fdtp)
    fdtp % ptr % iarr = iarr
    ih = transfer(fdtp, ih)
@@ -64,7 +64,7 @@ subroutine get_iarr(ih,iarr,n) bind (c)
    integer(c_int), intent(in) :: n
    integer(c_int), intent(in), dimension(12) :: ih
    integer(c_int), intent(out), dimension(n) :: iarr
-   type (Somederivedtype_pointer) :: fdtp
+   type (SomeDerivedType_pointer) :: fdtp
    fdtp = transfer(ih, fdtp)
    iarr = fdtp % ptr % iarr
 end subroutine get_iarr
@@ -72,7 +72,7 @@ end subroutine get_iarr
 ! derived type destructor
 subroutine destroy(ih) bind(c)
    integer(c_int), intent(inout), dimension(12) :: ih
-   type (Somederivedtype_pointer) :: fdtp
+   type (SomeDerivedType_pointer) :: fdtp
    fdtp = transfer(ih, fdtp)
    deallocate(fdtp % ptr % iarr)
    deallocate(fdtp % ptr)
