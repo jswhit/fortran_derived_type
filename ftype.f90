@@ -16,7 +16,7 @@ end type SomeDerivedType_pointer
 
 contains
 
-! create pointer to derived type, popluate derived type.
+! create pointer to derived type, populate derived type.
 subroutine create(ih,i,iarr_len,iarr) bind (c)
   integer(c_int), intent(inout), dimension(12) :: ih
   integer(c_int), intent(in) :: i,iarr_len
