@@ -19,6 +19,10 @@ def test():
     'goober'
     >>> fdt.iarr
     array([1, 1, 1, 1, 1], dtype=int32)
+    >>> fdt.iarr = np.zeros(6)
+    Traceback (most recent call last):
+        ...
+    ValueError: cannot change the size of iarr member
     """
 
 if __name__ == "__main__":

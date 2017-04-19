@@ -45,6 +45,8 @@ cdef class SomeDerivedType:
             return iarr
         def __set__(self,ndarray value):
             value = value.astype(np.intc)
+            if value.size != self.iarr_len:
+                raise ValueError('cannot change the size of iarr member')
             set_iarr(<int *>self.ptr.data, <int *>value.data, &self.iarr_len)
     def __dealloc__(self):
         destroy(<int *>self.ptr.data)
