@@ -1,6 +1,6 @@
 module ftype
 
-use iso_c_binding, only: c_int, c_char, c_null_char
+use iso_c_binding, only: c_int, c_char, c_null_char, c_loc, c_ptr, c_f_pointer
 implicit none 
 
 ! fortran derived type
@@ -11,112 +11,88 @@ type :: Somederivedtype
   integer, allocatable, dimension(:) :: iarr
 end type Somederivedtype
 
-
-! container that has pointer to derived type
-type :: Somederivedtype_pointer
-  type(Somederivedtype), pointer :: ptr
-end type Somederivedtype_pointer
-
 contains
 
-! create pointer to derived type, popluate derived type.
-subroutine create(ih,i,iarr_len,name,iarr) bind (c)
-  integer(c_int), intent(inout), dimension(12) :: ih
+! create derived type, convert to c pointer
+subroutine create(handle,i,iarr_len,name,iarr) bind (c)
+  type(c_ptr), intent(out) :: handle
   integer(c_int), intent(in) :: i,iarr_len
   integer(c_int), intent(in), dimension(iarr_len) :: iarr
   character(c_char), intent(in) :: name(namelen+1)
   character(len=namelen) :: name_f
-  type (Somederivedtype_pointer) :: fdtp
   type (Somederivedtype), pointer :: fdt
-  allocate(fdtp%ptr)
   call copy_string_ctof(name,name_f)
-  fdt => fdtp % ptr
+  allocate(fdt)
   allocate(fdt%iarr(iarr_len))
   fdt%i = i
   fdt%name = name_f
   fdt%iarr = iarr
-  !call initialize(fdtp%ptr,i,name_f,iarr,iarr_len)
-  ih = transfer(fdtp, ih)
+  handle = c_loc(fdt)
 end subroutine create
 
-subroutine initialize(fdt,i,name,iarr,iarr_len)
-  integer, intent(in) :: i,iarr_len
-  integer, intent(in), dimension(iarr_len) :: iarr
-  character(*), intent(in) :: name
-  type(SomeDerivedType), intent(out) :: fdt
-  allocate(fdt%iarr(iarr_len))
-  fdt%i = i
-  fdt%name = name
-  fdt%iarr = iarr
-end subroutine initialize
-
 ! set derived type member i
-subroutine set_i(ih, i) bind(c)
-   integer(c_int), intent(inout), dimension(12) :: ih
+subroutine set_i(handle, i) bind(c)
+   type(c_ptr), intent(out) :: handle
    integer(c_int), intent(in) :: i
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   fdtp % ptr % i = i
-   ih = transfer(fdtp, ih)
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   fdt % i = i
 end subroutine set_i
 
 ! get derived type member i
-subroutine get_i(ih,i) bind (c)
-   integer(c_int), intent(in), dimension(12) :: ih
+subroutine get_i(handle,i) bind (c)
+   type(c_ptr), intent(in) :: handle
    integer(c_int), intent(out) :: i
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   i = fdtp % ptr % i
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   i = fdt % i
 end subroutine get_i
 
 ! get derived type member name
-subroutine get_name(ih,name) bind (c)
-   integer(c_int), intent(in), dimension(12) :: ih
+subroutine get_name(handle,name) bind (c)
+   type(c_ptr), intent(in) :: handle
    character(c_char), intent(out) :: name(namelen+1)
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   call copy_string_ftoc(fdtp%ptr%name,name)
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   call copy_string_ftoc(fdt%name,name)
 end subroutine get_name
 
 ! set derived type member name
-subroutine set_name(ih, name) bind(c)
-   integer(c_int), intent(inout), dimension(12) :: ih
+subroutine set_name(handle, name) bind(c)
+   type(c_ptr), intent(in) :: handle
    character(c_char), intent(in) :: name(namelen+1)
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   call copy_string_ctof(name,fdtp%ptr%name)
-   ih = transfer(fdtp, ih)
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   call copy_string_ctof(name,fdt%name)
 end subroutine set_name 
 
 ! set derived type member iarr
-subroutine set_iarr(ih, iarr, n) bind(c)
+subroutine set_iarr(handle, iarr, n) bind(c)
+   type(c_ptr), intent(in) :: handle
    integer(c_int), intent(in) :: n
-   integer(c_int), intent(inout), dimension(12) :: ih
    integer(c_int), intent(in), dimension(n) :: iarr
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   fdtp % ptr % iarr = iarr
-   ih = transfer(fdtp, ih)
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   fdt % iarr = iarr
 end subroutine set_iarr
 
 ! get derived type member iarr
-subroutine get_iarr(ih,iarr,n) bind (c)
+subroutine get_iarr(handle,iarr,n) bind (c)
+   type(c_ptr), intent(in) :: handle
    integer(c_int), intent(in) :: n
-   integer(c_int), intent(in), dimension(12) :: ih
    integer(c_int), intent(out), dimension(n) :: iarr
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   iarr = fdtp % ptr % iarr
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   iarr = fdt % iarr
 end subroutine get_iarr
 
 ! derived type destructor
-subroutine destroy(ih) bind(c)
-   integer(c_int), intent(inout), dimension(12) :: ih
-   type (Somederivedtype_pointer) :: fdtp
-   fdtp = transfer(ih, fdtp)
-   deallocate(fdtp % ptr % iarr)
-   deallocate(fdtp % ptr)
-   ih = 0
+subroutine destroy(handle) bind(c)
+   type(c_ptr), intent(inout) :: handle
+   type (Somederivedtype), pointer :: fdt
+   call c_f_pointer(handle, fdt)
+   deallocate(fdt % iarr)
+   deallocate(fdt)
 end subroutine destroy
 
 subroutine copy_string_ctof(stringc,stringf)
