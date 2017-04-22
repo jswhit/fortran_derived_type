@@ -40,7 +40,7 @@ cdef class SomeDerivedType:
     property iarr:
         """get and set iarr member of derived type"""
         def __get__(self):
-            cdef ndarray iarr = np.empty(5,np.intc)
+            cdef ndarray iarr = np.empty(self.iarr_len,np.intc)
             get_iarr(<int *>self.ptr.data, <int *>iarr.data, &self.iarr_len)
             return iarr
         def __set__(self,ndarray value):
