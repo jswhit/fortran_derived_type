@@ -110,7 +110,7 @@ end subroutine copy_string_ctof
 subroutine copy_string_ftoc(stringf,stringc)
   ! utility function to convert c string to fortran string
   character(len=*), intent(in) :: stringf
-  character(c_char), intent(out) :: stringc(namelen+1)
+  character(c_char), intent(out) :: stringc(:)
   integer j,n
   n = len_trim(stringf)   
   do j=1,n    
