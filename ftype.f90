@@ -3,7 +3,12 @@ module ftype
 use iso_c_binding, only: c_int, c_char, c_null_char, c_loc, c_ptr, c_f_pointer
 implicit none 
 
-! fortran derived type
+! fortran derived type. It contains an allocatable component, so it is 
+! not directly interoperable with a C struct using iso_c_binding. Instead,
+! a handle of type c_ptr is created by passing an instance of the derived type
+! with a pointer attribute to c_loc.  The handle is passed to C/python.
+! When C/python passes this handle back, it is converted to a pointer
+! of type Somederivedtype using c_f_pointer.
 integer, parameter :: namelen=20
 type :: Somederivedtype
   integer :: i
