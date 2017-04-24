@@ -20,9 +20,5 @@ Requires numpy and cython (and a fortran compiler).
 
 2) Run test.py.
 
-Warning: The approach used here uses the fortran iso_c_binding routine c_loc to get a raw address to pass to python. 
-When it comes back to fortran it is converted to a fortran pointer using c_f_pointer.  If all the internal metadata 
-associated with the fortran derived type is not stored contiguously in memory, the resulting fortran pointer may not 
-contain all the information it needs to deallocate the structure components. This will result in memory leakage.  It works 
-with most fortran compilers (gfortran and intel fortran included) but may break in the future since nothing in
-the fortran standard guarantees it.
+The approach used here uses the fortran iso_c_binding routine c_loc to get a raw address to pass to C/python. 
+When it comes back to fortran it is converted to a fortran pointer using c_f_pointer.
