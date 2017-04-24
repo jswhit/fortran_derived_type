@@ -46,4 +46,10 @@ cdef class SomeDerivedType:
                 raise ValueError('cannot change the size of iarr member')
             set_iarr(&self.ptr, <int *>value.data, &self.iarr_len)
     def __dealloc__(self):
+        """make sure memory is deallocated when object goes out of scope"""
+        # Note - the fortran standard does not guarantee that this will work.
+        # The c pointer that refers to the fortran derived type may not
+        # point to all the internal metadata necessary for fortran to 
+        # deallocate the memory. In practice it works for most fortran
+        # compilers (gfortran and ifort included).
         destroy(&self.ptr)
