@@ -1,6 +1,7 @@
 import numpy as np
 from numpy cimport ndarray 
 
+# fortran routines exposed by iso_c_binding (in ftype.f90).
 cdef extern int create(void *handle, int *i, int *iarr_len, char *name, int *iarr);
 cdef extern int get_i(void *handle, int *i);
 cdef extern int set_i(void *handle, int *i);
@@ -10,6 +11,7 @@ cdef extern int get_name(void *handle, char *name);
 cdef extern int set_name(void *handle, char *name);
 cdef extern int destroy(void *handle);
 
+# python object corresponding to fortran derived type.
 cdef class SomeDerivedType:
     cdef void *ptr
     cdef public int iarr_len
