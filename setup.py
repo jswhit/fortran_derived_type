@@ -16,14 +16,11 @@ subprocess.call(strg,shell=True)
 # remove existing source file to force cython to regenerate it.
 if os.path.exists('ftype.c'): os.remove('ftype.c') # trigger a rebuild
 
-libs = ['gfortran'] # fortran library
-#lib_dirs = ['/opt/local/lib/gcc6'] # fortran library dir
-lib_dirs = [] # not needed if compatible version of gcc used for linking
+lib_dirs = [] # not needed if gfortran used for linking (set with env var LDSHARED)
 inc_dirs = [numpy.get_include()] # numpy include dir
 objs = ['%s.o' % fname] # fortran object to link
 ext_modules = [Extension('ftype',                       # module name
                         ['ftype.pyx'],                  # cython source file
-                        libraries     = libs,
                         include_dirs  = inc_dirs,
                         extra_objects = objs,
                         library_dirs  = lib_dirs)]
