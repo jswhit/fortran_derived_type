@@ -5,6 +5,7 @@ import os, sys, subprocess, numpy
 
 # build iso_c_binding fortran wrapper.
 compiler = 'gfortran'
+#compiler = 'ifort'
 fname = 'ftype'
 fopts = '-c -O2 -fPIC'
 

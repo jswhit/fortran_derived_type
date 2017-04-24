@@ -37,7 +37,7 @@ end subroutine create
 
 ! set derived type member i
 subroutine set_i(handle, i) bind(c)
-   type(c_ptr), intent(out) :: handle
+   type(c_ptr), intent(in) :: handle
    integer(c_int), intent(in) :: i
    type (Somederivedtype), pointer :: fdt
    call c_f_pointer(handle, fdt)

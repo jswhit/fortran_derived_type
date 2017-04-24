@@ -9,6 +9,8 @@ Example python interface to fortran derived type using cython.
 0) edit setup.py to change fortran compiler, libs as necessary (default is to use gfortran).
 1) run 'python setup.py build_ext --inplace'.
    on my mac, I had to set the env var LDSHARED='gfortran -bundle -undefined dynamic_lookup'
+   on linux, I used LDSHARED='gfortran -shared'
+   to use ifort on linux, change compiler in setup.py to 'ifort', set LDSHARED to 'ifort -shared'.
 2) run test.py.
 
 Warning: The approach used here uses the fortran iso_c_binding routine c_loc to get a raw address to pass to python. 
