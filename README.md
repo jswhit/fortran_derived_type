@@ -6,7 +6,7 @@ Example python interface to fortran derived type using cython.
 
 `test.py`:  test python program
 
-Requires numpy and cython.
+Requires numpy and cython (and a fortran compiler).
 
 0) Edit `setup.py` to change fortran compiler as necessary (default is to use gfortran).
 
