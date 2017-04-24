@@ -8,7 +8,6 @@ compiler = 'gfortran'
 #compiler = 'ifort'
 fname = 'ftype'
 fopts = '-c -O2 -fPIC'
-
 fsource = '%s.f90' % fname
 strg = '%s %s %s' % (compiler, fopts, fsource)
 sys.stdout.write('executing "%s"\n' % strg)
